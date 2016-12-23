@@ -51,15 +51,18 @@ if __name__ == '__main__':
 			else:
 				cnt[obj_name] += 1
 			training_img_name = imagename + '_' + obj_name + str(cnt[obj_name]) + '.png'
-			DEST_DIR = 'lieu' if obj_name == 'lieu' else 'nom'
+			#DEST_DIR = 'lieu' if obj_name == 'lieu' else 'nom'
+			DEST_DIR = obj_name
+			if not os.path.exists(DEST_DIR):
+                		os.makedirs(DEST_DIR)
 			training_img_path = os.path.join(this_dir, DEST_DIR, training_img_name)
 			is_crop=random.randint(0,1)
-			crop_size=5
+			crop_size=3
 			x_crop=random.randint(1,crop_size)
 			y_crop=random.randint(1,crop_size)
 			w_crop=random.randint(1,crop_size)
 			h_crop=random.randint(1,crop_size)
-			stretch_size=8
+			stretch_size=3
 			x_stretch=random.randint(1,stretch_size)
 			y_stretch=random.randint(1,stretch_size)
 			w_stretch=random.randint(1,stretch_size)
