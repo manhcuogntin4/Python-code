@@ -10,12 +10,15 @@ import glob
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+IMAGES_FOLDER="nomEpouse/"
+ANNOTAIONS_FILE="nomepouse.txt"
 class MyDialog(QDialog):
-    def __init__(self, image_list, images_annotation, i, parent=None):
+    def __init__(self, image_list, images_annotation, start_position, strFolderName, parent=None):
         super(MyDialog, self).__init__(parent)
         self.images=image_list
-        self.i=i
+        self.i=start_position
         self.annotations=images_annotation
+        self.strFolderName=strFolderName
 
     def paintEvent(self, QPaintEvent):
         painter = QPainter()
@@ -27,7 +30,7 @@ class MyDialog(QDialog):
         super(MyDialog, self).keyPressEvent(QKeyEvent)
         if QKeyEvent.text()!='q':
 			if(self.i<len(self.images)):
-				self.cvImage = cv2.imread("nom-backup/"+str(self.i+1)+".bin.png")
+				self.cvImage = cv2.imread(self.strFolderName+str(self.i+1)+".bin.png")
         		height, width, byteValue = self.cvImage.shape
         		byteValue = byteValue * width
         		cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB, self.cvImage)
@@ -43,17 +46,20 @@ class MyDialog(QDialog):
         else:
             app.exit(1)
 
-def readFileAnnotations():
-	f = open('nom-backup/nom.txt', 'r')
+def readFileAnnotations(strFileName):
+	print strFileName
+	f = open(strFileName, 'r')
 	annotations=[]
 	for line in f:
 		annotations.append(line)
 	f.close()
 	return annotations
 
-def readFileImages():
+def readFileImages(strFolderName):
+	print strFolderName
 	image_list = []
-	for filename in glob.glob('nom-backup/*.png'): #assuming gif
+	st=strFolderName+"*.png"
+	for filename in glob.glob(st): #assuming gif
 	    image_list.append(filename)
 	return image_list
 
@@ -61,10 +67,12 @@ def readFileImages():
 if __name__=="__main__":
     import sys
     app = QApplication(sys.argv)
-    image_list=readFileImages()
-    images_annotation=readFileAnnotations()
-    start=355
-    w = MyDialog(image_list,images_annotation,start)
+    strFileName=ANNOTAIONS_FILE
+    strFolderName=IMAGES_FOLDER
+    image_list=readFileImages(strFolderName)
+    images_annotation=readFileAnnotations(strFolderName+strFileName)
+    start=1
+    w = MyDialog(image_list,images_annotation,start, strFolderName)
     w.resize(600, 400)
     w.show()
     app.exec_()
