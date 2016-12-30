@@ -17,13 +17,11 @@ i=0
 fGood=open("good.txt",'w')
 
 while i<len(lsAnnotaiton):
-	command=[]
 	if not (i in lsBad):
 		fGood.write(lsAnnotaiton[i-1])
 	else:
 		cmd= "rm " + str(i)+".bin.png"
 		os.system(cmd)
-
 	i=i+1
 fBad.close()
 fAnnotation.close()
