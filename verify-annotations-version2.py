@@ -36,7 +36,7 @@ class MyDialog(QDialog):
         		cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB, self.cvImage)
         		self.mQImage = QImage(self.cvImage, width, height, byteValue, QImage.Format_RGB888)
         		msg = QMessageBox()
-		text=self.annotations[self.i].encode('utf-8')
+			text=self.annotations[self.i].encode('utf-8')
         		#msg.setText(self.annotations[self.i])
 			msg.setText(text)
         		msg.setInformativeText("Image :" +str(self.i))
