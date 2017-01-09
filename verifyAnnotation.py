@@ -70,7 +70,7 @@ class Ui_VerifyDialog(object):
         text=self.annotations[self.i].encode('utf-8')
         self.lineEdit.setText(text)
         self.imageEdit.setText("Image :" +str(self.i))
-        QtGui.QShortcut(QtGui.QKeySequence("Ctrl+C"), self, None, self.nextImage)
+	self.label.setPixmap(QtGui.QPixmap(self.strFolderName+str(self.i+1)+".bin.png"))
 
     def retranslateUi(self, VerifyDialog):
         VerifyDialog.setWindowTitle(_translate("VerifyDialog", "Verify Dialog", None))
