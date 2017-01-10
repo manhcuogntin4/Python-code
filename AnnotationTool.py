@@ -64,6 +64,7 @@ class Ui_Dialog(object):
         self.AnnotationText = QtGui.QLineEdit(Dialog)
         self.AnnotationText.setGeometry(QtCore.QRect(90, 340, 411, 27))
         self.AnnotationText.setObjectName(_fromUtf8("AnnotationText"))
+        self.AnnotationText.editingFinished.connect(self.saveFileAnnotation)
         self.label_3 = QtGui.QLabel(Dialog)
         self.label_3.setGeometry(QtCore.QRect(530, 344, 68, 20))
         self.label_3.setObjectName(_fromUtf8("label_3"))
@@ -86,7 +87,7 @@ class Ui_Dialog(object):
         self.Delete.setObjectName(_fromUtf8("Delete"))
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), self.savePosition)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -114,7 +115,7 @@ class Ui_Dialog(object):
                 self.i=self.i+1
                 self.AnnotationText.setFocus()
                 self.labe_image.setPixmap(QtGui.QPixmap(self.strFolderName+str(self.i+1)+".bin.png"))
-                self.label_image.setText=str(self.i)
+                self.label_image.setText(str(self.i+1))
                 annotationText=self.AnnotationText.text()
                 filename=self.strFolderName+str(self.i)+".gt.txt"
                 writeFileAnnotation(filename,annotationText)
@@ -126,14 +127,36 @@ class Ui_Dialog(object):
 
               
     def previousImage(self):
-        if(self.i<len(self.images) and self.i>1):
+        if(self.i<len(self.images) and self.i>=1):
                 self.i=self.i-1
+                self.AnnotationText.setFocus()
                 self.labe_image.setPixmap(QtGui.QPixmap(self.strFolderName+str(self.i+1)+".bin.png"))
-                self.label_image.setText(str(self.i))
+                self.label_image.setText(str(self.i+1))
+                filename=self.strFolderName + str(self.i+1)+".gt.txt"
+                print "here"
+                print readFileAnnotation(filename)
+                self.AnnotationText.setText(readFileAnnotation(filename))
                 annotationText=self.AnnotationText.text()
-                filename=self.strFolderName+str(self.i)+".gt.txt"
                 writeFileAnnotation(filename,annotationText)
-                self.AnnotationText.setText("")
+                #self.AnnotationText.setText("")
+        else:
+            warningMessage("You must enter the annotation Text")
+            self.AnnotationText.setFocus()
+
+    def saveFileAnnotation(self):
+        annotationText=self.AnnotationText.text()
+        if(annotationText!=""):
+            filename=self.strFolderName+str(self.i+1)+".gt.txt"
+            writeFileAnnotation(filename,annotationText)
+            self.Next.setFocus()
+    def getPosition(self):
+        return self.i
+    def savePosition(self):
+        f=open("init.txt","w")
+        f.write(str(self.i))
+        f.close()
+        sys.exit()
+
 
 def warningMessage(strWarning):
     msg = QMessageBox()
@@ -152,6 +175,16 @@ def readFileAnnotations(strFileName):
         annotations.append(line)
     f.close()
     return annotations
+
+def readFileAnnotation(strFileName):
+    try:
+        f=open(strFileName,'r')
+        annotationText=f.read(50)
+        f.close()
+        return annotationText
+    except IOError:
+        warningMessage("File not Found")
+
 
 def readFileImages(strFolderName):
     print strFolderName
@@ -183,7 +216,8 @@ if __name__ == "__main__":
     strFolderName=IMAGES_FOLDER
     image_list=readFileImages(strFolderName)
     images_annotation=readFileAnnotations(strFolderName+strFileName)
-    start=0
+    f=open("init.txt",'r')
+    start=int(f.read())
     Dialog = QtGui.QDialog()
     ui = Ui_Dialog()
     ui.setupUi(Dialog, image_list,images_annotation,start, strFolderName)
