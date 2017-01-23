@@ -14,18 +14,8 @@ sys.setdefaultencoding('utf-8')
 INCREASE=False
 def readFieldString(st):
 	lsField=[]
-	index=0
-	found=0
-	st.encode('utf-8')
-	while found!=-1:	
-		found=st.find(" ")
-		if found !=-1:
-			pos=st.index(" ")
-			index=pos
-			if(st[:index]!="") and (st[:index]!='\t'):
-				lsField.append(st[:index])
-			st=st[index+1:]
-	lsField.append(st)
+	for word in st.split():
+		lsField.append(word)
 	return lsField
 
 def readFileBox(file_name):
@@ -51,6 +41,7 @@ def getCoordinationVector(file_name):
 			BoxCoordination.append(firstLine[1])
 			BoxCoordination.append(firstLine[2])
 			BoxCoordination.append(firstLine[3])
+			BoxCoordination.append(firstLine[4])
 		else:
 			secondLine=readFieldString(line)
 			BoxCoordination.append(secondLine[0])
@@ -71,22 +62,44 @@ def mixNearRegion(lsBoxCoordination):
 				if isIncrease==False:
 					lsCordination.append(int(item[0]))
 					lsCordination.append(int(item[1]))
+					lsCordination.append(int(item[2]))
+					lsCordination.append(int(item[3]))
 					print lsBoxCoordination[i][0] , lsBoxCoordination[i+1][0] , isIncrease
 					isIncrease=True
 			else :
+				lsCordination.append(int(item[0]))
+				lsCordination.append(int(item[1]))
+				lsCordination.append(int(item[2]))
 				isIncrease=False
+
 		i=i+1
 
-			
 	return lsCordination
 
+def cutFileImage(imageFile, lsCordination):
+	img = cv2.imread(imageFile,0)
+	height, width = img.shape[:2]
+	t2=height
+	for i in range(len(lsCordination)/7):
+		xMin=lsCordination[7*i]
+		yMin=lsCordination[7*i+1]
+		yMax=lsCordination[7*i+3]
+		xMax=lsCordination[7*i+6]
+		print xMin, xMax
+		#yMax=lsCordination[6*i+7]
+		#print height, width, yMin, height-yMin, height-yMax, xMax
+		#image_temps=img[yMin:30, xMin:xMax-xMin]
+		image_temps=img[height-yMax:height-yMin, xMin:xMax]
+		#t2=yMin
+		strTemp="line"+ str(i) + imageFile
+		cv2.imwrite(strTemp,image_temps)
 
 
-
-st=getCoordinationVector("test.box")
+st=getCoordinationVector("test1.box")
 print st
 ls=mixNearRegion(st)
 print ls
+cutFileImage("test1.tif",ls)
 #f=getCoordinationVector("test.box")
 #print f
 
