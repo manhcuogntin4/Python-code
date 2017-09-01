@@ -1,3 +1,4 @@
+# coding=utf-8
 import re
 f = open('prenom.txt', 'r')
 f_out=open('prenom-out.txt','w')
@@ -6,7 +7,7 @@ for line in f:
 	#index=line.find(':')
 	#str=re.findall(r'(\(m\): [A-Z][a-z]* $)', line)
 	#str=re.findall(r'\(m\)\s([A-Z][a-z])*\s:', line)
-	str=re.findall(r'\(m\)\s[A-Za-z]*\s:|\(f\)\s[A-Za-z]*\s:|\(f\)\s[A-Za-z]*\s:', line)
+	str=re.findall(r'\(m\)\s[A-Za-zéèîïöôàâ]*\s:?|\(f\)\s[A-Za-zéèîïöôàâ]*\s:?|\(x\)\s[A-Za-zéèîïöôàâ]*\s:?', line)
 	#print str
 	if(str):
 		print str
